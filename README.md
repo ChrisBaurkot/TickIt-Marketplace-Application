@@ -19,7 +19,7 @@ The fourth function allows users of the application to set a desired price for t
 
 Lastly, the fifth function will purchase the ticket for the user at their desired price and for their desired event if their account has enough ether and there are tickets are available
 
-# FUTURE CHANGES AND PROBLEMS
+# FUTURE CHANGES AND ISSUES
 
 The TickIt Marketplace application is expected to undergo future changes that I encountered some issues with. Specifically, an API integration is planned to automatically update events and concerts within the application, removing the need for the contract owner to perform manual updates. However, accessing the necessary data for the API has proven challenging due to limitations imposed by certain ticket marketplace websites, which may not provide the required data for the API to function properly.
 
