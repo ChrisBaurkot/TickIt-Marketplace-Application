@@ -1,0 +1,92 @@
+pragma solidity ^0.8.0;
+
+
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+
+
+contract TicketMarketplace is Ownable {
+    using SafeMath for uint256;
+// storing and manages the events in the "struct"
+    struct Event {
+        uint256 eventId;
+        string eventName;
+        string artistName;
+        uint256 eventDate;
+        uint256 ticketPrice;
+        uint256 totalTickets;
+        uint256 ticketsSold;
+    }
+// Creation of events for ticket purchase and when new events to purchase tickets for are released
+    event EventCreated(uint256 eventId, string eventName, string artistName, uint256 eventDate, uint256 ticketPrice, uint256 totalTickets);
+    event TicketPurchased(uint256 eventId, address buyer, uint256 ticketPrice);
+
+// Listing of events that have been created within the contract
+    Event[] public events;
+
+// Similar to python dictionary, uses mapping as key-value pairs, setting 
+// First key is the event ID and second key is the address, and the values are "uint256"
+    mapping(uint256 => mapping(address => uint256)) public ticketsPerEventPerBuyer;
+    mapping(uint256 => mapping(address => uint256)) public ticketPricePerEventPerBuyer;
+
+// New concert or event being listed
+    function createEvent(uint256 eventId, string memory eventName, string memory artistName, uint256 eventDate, uint256 ticketPrice, uint256 totalTickets) public onlyOwner {
+
+        Event memory newEvent = Event({
+            eventId: eventId,
+            eventName: eventName,
+            artistName: artistName,
+            eventDate: eventDate,
+            ticketPrice: ticketPrice,
+            totalTickets: totalTickets,
+            ticketsSold: 0
+        });
+        events.push(newEvent);
+
+        emit EventCreated(eventId, eventName, artistName, eventDate, ticketPrice, totalTickets);
+    }
+
+// Gives ability to purchase ticket while making sure if there are tickets available and that the user has enough funds/ether in their account to buy the ticket
+// if the user does not have enough funds or there are no more tickets available, it will display the text strings in the quotations
+    function purchaseTicket(uint256 eventId) public payable {
+        Event storage selectedEvent = events[eventId];
+
+        require(selectedEvent.ticketsSold < selectedEvent.totalTickets, "There are no more available tickets for this event.");
+        require(msg.value == selectedEvent.ticketPrice, "Not enough funds to purchase ticket.");
+
+        selectedEvent.ticketsSold = selectedEvent.ticketsSold.add(1);
+        ticketsPerEventPerBuyer[eventId][msg.sender] = ticketsPerEventPerBuyer[eventId][msg.sender].add(1);
+
+        emit TicketPurchased(eventId, msg.sender, selectedEvent.ticketPrice);
+    }
+
+// allows only the owner of the contract to withdraw a balance from the contract
+    function withdraw() public onlyOwner {
+
+        address payable owner = payable(owner());
+        owner.transfer(address(this).balance);
+    }
+
+// Gives the user the ability to set a certain desired price for a certain event/concert
+    function setTicketPrice(uint256 eventId, uint256 price) public {
+        ticketPricePerEventPerBuyer[eventId][msg.sender] = price;
+    }
+
+// Function will purchase the ticket for the user at their desired price and for their desired event if their account has enough ether and there are tickets are available
+// Insufficient funds/shortage of tickets will cause one of the text strings in the quoations to be displayed
+// "emit" notifies and updates the front end that the ticket has been purchased
+    function purchaseTicketWithPrice(uint256 eventId) public payable {
+
+        Event storage selectedEvent = events[eventId];
+
+        uint256 ticketPrice = ticketPricePerEventPerBuyer[eventId][msg.sender];
+
+        require(selectedEvent.ticketsSold < selectedEvent.totalTickets, "There are no more available tickets for this event.");
+        require(msg.value >= ticketPrice, "Not enough funds to purchase ticket.");
+
+        selectedEvent.ticketsSold = selectedEvent.ticketsSold.add(1);
+        ticketsPerEventPerBuyer[eventId][msg.sender] = ticketsPerEventPerBuyer[eventId][msg.sender].add(1);
+
+        emit TicketPurchased(eventId, msg.sender, selectedEvent.ticketPrice);
+    }
+}
