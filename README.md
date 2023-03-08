@@ -2,7 +2,7 @@
 
 The TickIt Marketplace app notifies users when tickets for their preferred events are available and helps them purchase tickets at their preferred price point.
 
-The aim of the Ticket Marketplace app is to provide a comprehensive overview of ticket prices from both primary and secondary sources across the internet. Users will receive notifications based on their preferences when ticket prices exceed or fall below a specified threshold. By selecting their preferred artists and bands, users will be alerted when concert or tour tickets become available. Additionally, the app empowers users to set a maximum price they are willing to pay for a ticket. If the ticket price drops to that level, the app will automatically purchase the ticket on their behalf, ensuring they never miss an opportunity to attend their favorite events.
+The aim of the TickIt Marketplace application is to give a comprehensive overview of ticket prices from ticket vendors across the internet. Users will  be able to receive notifications based on their preferences when ticket prices exceed or fall below a specified threshold. After selecting their preferred artists and bands, users of TickIt will be alerted when concert or event tickets become available. Additionally, the app empowers users to set a threshold price they are willing to pay for a ticket. If the ticket price drops to that max level set by the user, the app will automatically purchase the ticket on their behalf, ensuring they never miss an opportunity to attend their favorite events.
 
 
 # FUNCTIONS:
